@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
-// The workspace uses an orthographic camera. That lets this small software
-// renderer interpolate depth, lighting, and texture coordinates in screen space.
+// The software renderer shares the perspective camera with WebGL.
 export function createCanvasRenderer(canvas) {
   const context = canvas.getContext('2d', { alpha: true });
   if (!context) throw new Error('Canvas unavailable');
@@ -16,7 +15,6 @@ export function createCanvasRenderer(canvas) {
   const transform = new THREE.Matrix4();
   const frustum = new THREE.Frustum();
   const normalTransform = new THREE.Matrix3();
-  const projectedPoint = new THREE.Vector3();
   const geometryCache = new Map();
   const textureCache = new Map();
   const light = new THREE.Vector3(-.42, .82, .42).normalize();
@@ -56,31 +54,25 @@ export function createCanvasRenderer(canvas) {
   function collect(scene) {
     const opaque = [];
     const transparent = [];
-    const decorations = [];
     scene.traverse(object => {
-      if (object.isLine || object.isPoints) {
-        decorations.push(object);
-        return;
-      }
       if (!object.isMesh) return;
 
       const geometry = simplify(object.geometry);
-      const color = object.material.color.getHex();
       const record = {
         object,
         positions: geometry.attributes.position.array,
         normals: geometry.attributes.normal.array,
         uv: geometry.attributes.uv?.array,
         indices: geometry.index?.array,
-        projected: new Float32Array(geometry.attributes.position.count * 4),
-        color: [(color >> 16) & 255, (color >> 8) & 255, color & 255],
+        projected: new Float32Array(geometry.attributes.position.count * 5),
+        color: new Uint8Array(3),
         texture: getTexture(object.material.map),
-        opacity: object.material.opacity,
+        doubleSided: object.material.side === THREE.DoubleSide,
         lit: !object.material.isMeshBasicMaterial,
       };
       (object.material.transparent ? transparent : opaque).push(record);
     });
-    return { opaque, transparent, decorations };
+    return { opaque, transparent };
   }
 
   function project(record) {
@@ -88,13 +80,16 @@ export function createCanvasRenderer(canvas) {
     const m = transform.multiplyMatrices(viewProjection, object.matrixWorld).elements;
     const n = normalTransform.getNormalMatrix(object.matrixWorld).elements;
 
-    for (let i = 0, output = 0; i < positions.length; i += 3, output += 4) {
+    for (let i = 0, output = 0; i < positions.length; i += 3, output += 5) {
       const x = positions[i];
       const y = positions[i + 1];
       const z = positions[i + 2];
-      projected[output] = (1 + m[0] * x + m[4] * y + m[8] * z + m[12]) * width * .5;
-      projected[output + 1] = (1 - m[1] * x - m[5] * y - m[9] * z - m[13]) * height * .5;
-      projected[output + 2] = m[2] * x + m[6] * y + m[10] * z + m[14];
+      const w = m[3] * x + m[7] * y + m[11] * z + m[15];
+      const inverse = w > .075 ? 1 / w : 0;
+      projected[output] = (1 + (m[0] * x + m[4] * y + m[8] * z + m[12]) * inverse) * width * .5;
+      projected[output + 1] = (1 - (m[1] * x + m[5] * y + m[9] * z + m[13]) * inverse) * height * .5;
+      projected[output + 2] = (m[2] * x + m[6] * y + m[10] * z + m[14]) * inverse;
+      projected[output + 4] = inverse;
 
       let brightness = 1;
       if (lit) {
@@ -111,10 +106,13 @@ export function createCanvasRenderer(canvas) {
   }
 
   function drawTriangle(record, a, b, c, alpha) {
-    const { projected: points, color, texture, uv, opacity } = record;
-    const ai = a * 4;
-    const bi = b * 4;
-    const ci = c * 4;
+    const { projected: points, color, texture, uv, object, doubleSided } = record;
+    const opacity = object.material.opacity;
+    const ai = a * 5;
+    const bi = b * 5;
+    const ci = c * 5;
+    const wa = points[ai + 4], wb = points[bi + 4], wc = points[ci + 4];
+    if (!wa || !wb || !wc) return;
     const ax = points[ai];
     const ay = points[ai + 1];
     const bx = points[bi];
@@ -122,7 +120,7 @@ export function createCanvasRenderer(canvas) {
     const cx = points[ci];
     const cy = points[ci + 1];
     const area = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
-    if (area >= -.035) return;
+    if (Math.abs(area) < .035 || (area > 0 && !doubleSided)) return;
 
     const minX = Math.max(0, Math.floor(Math.min(ax, bx, cx)));
     const minY = Math.max(0, Math.floor(Math.min(ay, by, cy)));
@@ -156,8 +154,9 @@ export function createCanvasRenderer(canvas) {
         let blue = color[2];
         let weight = opacity;
         if (texture && uv) {
-          const u = uv[a * 2] * w0 + uv[b * 2] * w1 + uv[c * 2] * w2;
-          const v = uv[a * 2 + 1] * w0 + uv[b * 2 + 1] * w1 + uv[c * 2 + 1] * w2;
+          const inv = 1 / (wa * w0 + wb * w1 + wc * w2);
+          const u = (uv[a * 2] * wa * w0 + uv[b * 2] * wb * w1 + uv[c * 2] * wc * w2) * inv;
+          const v = (uv[a * 2 + 1] * wa * w0 + uv[b * 2 + 1] * wb * w1 + uv[c * 2 + 1] * wc * w2) * inv;
           const tx = Math.min(texture.width - 1, Math.max(0, Math.round(u * (texture.width - 1))));
           const ty = Math.min(texture.height - 1, Math.max(0, Math.round((1 - v) * (texture.height - 1))));
           const index = (ty * texture.width + tx) * 4;
@@ -168,10 +167,13 @@ export function createCanvasRenderer(canvas) {
         }
 
         if (alpha) {
-          if (pixels[offset + 3] === 0) continue;
-          pixels[offset] = pixels[offset] * (1 - weight) + r * weight;
-          pixels[offset + 1] = pixels[offset + 1] * (1 - weight) + g * weight;
-          pixels[offset + 2] = pixels[offset + 2] * (1 - weight) + blue * weight;
+          const background = pixels[offset + 3] / 255 * (1 - weight);
+          const output = weight + background;
+          if (!output) continue;
+          pixels[offset] = (pixels[offset] * background + r * weight) / output;
+          pixels[offset + 1] = (pixels[offset + 1] * background + g * weight) / output;
+          pixels[offset + 2] = (pixels[offset + 2] * background + blue * weight) / output;
+          pixels[offset + 3] = output * 255;
         } else {
           const shade = lightA * w0 + lightB * w1 + lightC * w2;
           pixels[offset] = r * shade;
@@ -189,6 +191,10 @@ export function createCanvasRenderer(canvas) {
       if (!object.visible) return;
     }
     if (!frustum.intersectsObject(record.object)) return;
+    const hex = record.object.material.color.getHex();
+    record.color[0] = hex >> 16;
+    record.color[1] = hex >> 8;
+    record.color[2] = hex;
     project(record);
     const { indices, positions } = record;
     const count = indices?.length ?? positions.length / 3;
@@ -196,54 +202,6 @@ export function createCanvasRenderer(canvas) {
       if (indices) drawTriangle(record, indices[i], indices[i + 1], indices[i + 2], alpha);
       else drawTriangle(record, i, i + 1, i + 2, alpha);
     }
-  }
-
-  function pixelPoint(object, index) {
-    const position = object.geometry.attributes.position;
-    projectedPoint.fromBufferAttribute(position, index);
-    projectedPoint.applyMatrix4(object.matrixWorld).applyMatrix4(viewProjection);
-    return [(projectedPoint.x + 1) * .5 * width, (1 - projectedPoint.y) * .5 * height, projectedPoint.z];
-  }
-
-  function visibleAt(x, y, z) {
-    const px = Math.round(x);
-    const py = Math.round(y);
-    return px >= 0 && py >= 0 && px < width && py < height && z < depth[py * width + px];
-  }
-
-  function drawDecoration(object) {
-    if (!object.visible) return;
-    const count = object.geometry.attributes.position.count;
-    if (object.isPoints) {
-      const palette = ['#cebefc', '#b5dfff', '#d9f5a4', '#d19cd5'];
-      context.globalAlpha = .67;
-      for (let i = 0; i < count; i++) {
-        const [x, y, z] = pixelPoint(object, i);
-        if (!visibleAt(x, y, z)) continue;
-        context.fillStyle = palette[i % palette.length];
-        context.beginPath();
-        context.arc(x, y, .68 + (i % 5) * .105, 0, Math.PI * 2);
-        context.fill();
-      }
-    } else {
-      context.fillStyle = '#dfcfff';
-      context.globalAlpha = .53;
-      let phase = 0;
-      for (let i = 1; i < count; i++) {
-        const [x0, y0, z0] = pixelPoint(object, i - 1);
-        const [x1, y1, z1] = pixelPoint(object, i);
-        const steps = Math.ceil(Math.hypot(x1 - x0, y1 - y0));
-        for (let step = 0; step < steps; step++, phase++) {
-          if (phase % 9 > 4) continue;
-          const fraction = step / steps;
-          const x = x0 + (x1 - x0) * fraction;
-          const y = y0 + (y1 - y0) * fraction;
-          const z = z0 + (z1 - z0) * fraction;
-          if (visibleAt(x, y, z)) context.fillRect(x, y, 1.2, 1.2);
-        }
-      }
-    }
-    context.globalAlpha = 1;
   }
 
   return {
@@ -266,7 +224,6 @@ export function createCanvasRenderer(canvas) {
       for (const record of objects.opaque) drawObject(record, false);
       for (const record of objects.transparent) drawObject(record, true);
       context.putImageData(image, 0, 0);
-      for (const object of objects.decorations) drawDecoration(object);
     },
   };
 }

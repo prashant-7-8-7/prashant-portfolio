@@ -11,12 +11,14 @@ const bootScreen = document.querySelector('#boot-screen');
 const bootHeading = document.querySelector('#boot-heading');
 const bootLog = document.querySelector('#boot-log');
 const greetingPanel = document.querySelector('#room-power-panel');
-const power = document.querySelector('#power-on');
-const powerLabel = document.querySelector('#power-label');
+const enter = document.querySelector('#power-on');
+const computer = document.querySelector('#enter-monitor');
 const voice = document.querySelector('#greeting-play');
 const greeting = document.querySelector('#greeting-audio');
 const sound = document.querySelector('#workspace-sound');
-const viewRoom = document.querySelector('#view-room');
+const traySound = document.querySelector('#desktop-mute');
+const lookAround = document.querySelector('#view-room');
+const freeCamera = document.querySelector('#free-camera');
 const expand = document.querySelector('#expand-desktop');
 const skip = document.querySelector('#skip-boot');
 const motionToggle = document.querySelector('#room-motion');
@@ -24,33 +26,32 @@ const shutdownDialog = document.querySelector('#shutdown-dialog');
 const help = document.querySelector('#room-help');
 const status = document.querySelector('#room-status');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-const audio = createWorkspaceAudio(greeting, playing => {
-  voice.textContent = playing ? 'Pause greeting' : 'Hear greeting';
-  greetingPanel.classList.toggle('is-speaking', playing);
-  if (playing) room?.wave();
-});
-const apps = setupDesktop(display, { audio, onShutdown: confirmShutdown });
-const openingViews = {
-  work: 'projects', 'document-workspace': 'workspace',
-};
+const narrowViewport = window.matchMedia('(max-width: 680px)');
+const aliases = { work: 'projects', 'document-workspace': 'workspace' };
 const requested = location.hash.slice(1);
-const entry = Object.hasOwn(openingViews, requested) ? openingViews[requested] : requested;
-let pendingApp = appTitle(entry) ? entry : undefined;
-
+const entry = Object.hasOwn(aliases, requested) ? aliases[requested] : requested;
+let nextApp = appTitle(entry) ? entry : undefined;
 let room;
-let phase = 'room';
+let view = 'intro';
+let phase = 'off';
 let expanded = false;
 let motion = !reducedMotion.matches;
 let bootTimer = 0;
-let started = false;
-let initializedDesktop = false;
-let bootApp;
 let greetingRequested = false;
+
+const audio = createWorkspaceAudio(greeting, playing => {
+  voice.textContent = playing ? 'Pause greeting' : 'Hear greeting';
+  if (playing) room?.wave();
+});
+const apps = setupDesktop(display, { audio, onShutdown: confirmShutdown });
 
 function updateSound() {
   sound.textContent = audio.enabled ? 'Sound on' : 'Sound off';
   sound.setAttribute('aria-pressed', String(audio.enabled));
+  const label = audio.enabled ? 'Mute sound' : 'Enable sound';
+  traySound.title = label;
+  traySound.setAttribute('aria-label', label);
+  traySound.textContent = audio.enabled ? '♪' : '×';
 }
 
 function setExpanded(value) {
@@ -61,94 +62,108 @@ function setExpanded(value) {
   expand.setAttribute('aria-pressed', String(value));
 }
 
+function updateView(next, immediate = false) {
+  view = next;
+  stage.dataset.view = view;
+  const inRoom = view !== 'monitor';
+  room?.setView(view, immediate);
+  if (inRoom) setExpanded(false);
+  greetingPanel.hidden = view !== 'intro';
+  computer.hidden = view !== 'desk' && view !== 'orbit';
+  help.hidden = computer.hidden;
+  freeCamera.hidden = !room || view === 'intro' || view === 'monitor';
+  freeCamera.textContent = view === 'orbit' ? 'Desk view' : 'Free camera';
+  freeCamera.setAttribute('aria-pressed', String(view === 'orbit'));
+  lookAround.hidden = inRoom;
+  expand.hidden = !room || inRoom || phase !== 'desktop';
+  display.hidden = phase === 'off' || view === 'intro';
+  display.inert = inRoom || phase !== 'desktop';
+  audio.setComputer(phase !== 'off' && phase !== 'shutdown', !inRoom);
+}
+
 function finishBoot() {
   if (phase !== 'booting') return;
   clearTimeout(bootTimer);
   phase = 'desktop';
-  started = true;
   bootScreen.hidden = true;
   desktop.hidden = false;
   skip.hidden = true;
-  expand.hidden = !room;
-  if (!room || viewport.clientWidth < 670) setExpanded(true);
-  const route = bootApp || 'desktop';
-  if (location.hash !== '#' + route) history.replaceState(history.state, '', '#' + route);
-  help.textContent = 'Open an app from Start. Drag a title bar to move a window.';
+  updateView('monitor');
+  const route = nextApp || 'desktop';
+  history.replaceState(history.state, '', '#' + route);
   status.textContent = 'Workspace ready.';
-  if (!initializedDesktop || bootApp) {
-    initializedDesktop = true;
-    apps.openApp(bootApp || 'showcase', null, false);
-  } else apps.focus();
-  bootApp = undefined;
+  apps.openApp(nextApp || 'showcase', null, false);
+  nextApp = undefined;
+  audio.play('ready');
 }
 
-function enterWorkspace({ immediate = false, userAction = false } = {}) {
-  if (phase !== 'room') return;
-  phase = 'booting';
-  bootApp = pendingApp;
-  pendingApp = undefined;
+function openComputer({ immediate = false, userAction = false } = {}) {
+  if (view === 'monitor') return;
   if (userAction && audio.enabled) audio.unlock();
   audio.stopGreeting();
-  audio.setComputer(true, true);
-  greetingPanel.hidden = true;
-  display.hidden = false;
-  viewRoom.hidden = !room;
-  desktop.hidden = true;
-  bootScreen.hidden = false;
-  bootHeading.textContent = 'WORKSPACE SYSTEM';
-  bootLog.replaceChildren();
-  room?.focusScreen(true, immediate);
-  setExpanded(!room || viewport.clientWidth < 670);
-  status.textContent = 'Starting the workspace computer.';
-
-  const wasRunning = started;
-  if (wasRunning || immediate || !motion) {
-    finishBoot();
-    if (!wasRunning && userAction) audio.play('ready');
+  const wasRunning = phase === 'desktop';
+  if (!wasRunning) {
+    phase = 'booting';
+    desktop.hidden = true;
+    bootScreen.hidden = false;
+    bootHeading.textContent = 'PRASHANT WORKSPACE BIOS';
+    bootLog.replaceChildren();
+    room?.setPower(true);
+  }
+  updateView('monitor', immediate);
+  setExpanded(!room || narrowViewport.matches);
+  if (wasRunning) {
+    apps.focus();
+    status.textContent = 'Computer view.';
     return;
   }
-
+  status.textContent = 'Starting the computer.';
+  if (immediate || !motion) {
+    finishBoot();
+    return;
+  }
   audio.play('boot');
   const lines = [
-    'Checking display… ready',
-    'Mounting project files… 4 found',
-    'Starting desktop applications… ready',
-    'Opening My Showcase',
+    'Checking display ........ OK',
+    'Checking memory ......... OK',
+    'Mounting project files .. 4 found',
+    'Starting desktop ........',
   ];
-  let bootIndex = 0;
   skip.hidden = false;
   skip.focus({ preventScroll: true });
-  function nextLine() {
-    if (bootIndex === lines.length) {
+  let index = 0;
+  function printLine() {
+    if (index === lines.length) {
       finishBoot();
-      audio.play('ready');
       return;
     }
     const line = document.createElement('p');
-    line.textContent = lines[bootIndex++];
+    line.textContent = lines[index++];
     bootLog.append(line);
     audio.play('key');
-    bootTimer = window.setTimeout(nextLine, 305);
+    bootTimer = window.setTimeout(printLine, 285);
   }
-  nextLine();
+  printLine();
 }
 
-function showRoom() {
-  clearTimeout(bootTimer);
-  phase = 'room';
-  display.hidden = true;
-  greetingPanel.hidden = false;
-  viewRoom.hidden = true;
-  expand.hidden = true;
-  skip.hidden = true;
-  setExpanded(false);
-  room?.focusScreen(false);
-  audio.setComputer(started, false);
-  if (location.hash) history.replaceState(history.state, '', location.pathname + location.search);
-  powerLabel.textContent = started ? 'Resume workspace' : 'Enter workspace';
-  help.textContent = room ? 'Click the monitor to enter. Drag to look around.' : 'Enter the workspace to explore projects and demos.';
-  status.textContent = 'Room view.';
-  power.focus({ preventScroll: true });
+function enterWorkspace() {
+  if (audio.enabled) audio.unlock();
+  audio.stopGreeting();
+  if (!room || narrowViewport.matches) {
+    openComputer({ userAction: true });
+  } else {
+    updateView('desk');
+    status.textContent = 'Workspace entered.';
+    computer.focus({ preventScroll: true });
+  }
+}
+
+function showDesk() {
+  if (phase === 'shutdown') return;
+  if (phase === 'booting') finishBoot();
+  updateView('desk');
+  status.textContent = 'Desk view.';
+  computer.focus({ preventScroll: true });
 }
 
 function confirmShutdown() {
@@ -159,31 +174,38 @@ function confirmShutdown() {
 function shutDown() {
   if (phase !== 'desktop') return;
   phase = 'shutdown';
+  display.inert = true;
   audio.play('shutdown');
   audio.setComputer(false);
+  room?.setPower(false);
   apps.reset();
-  initializedDesktop = false;
-  started = false;
   desktop.hidden = true;
+  lookAround.hidden = true;
   expand.hidden = true;
-  viewRoom.hidden = true;
-  bootHeading.textContent = 'WORKSPACE POWERED OFF';
+  bootHeading.textContent = 'It is now safe to turn off your computer.';
   bootLog.replaceChildren();
   bootScreen.hidden = false;
-  if (motion) bootTimer = window.setTimeout(showRoom, 630);
-  else showRoom();
+
+  function returnToIntro() {
+    phase = 'off';
+    history.replaceState(history.state, '', location.pathname + location.search);
+    updateView('intro');
+    status.textContent = 'Computer shut down.';
+    enter.focus({ preventScroll: true });
+  }
+  if (motion) bootTimer = window.setTimeout(returnToIntro, 710);
+  else returnToIntro();
 }
 
 function useFallback() {
   room = null;
   host.replaceChildren();
   stage.classList.remove('is-rendered');
+  freeCamera.hidden = true;
   motionToggle.hidden = true;
-  viewRoom.hidden = phase !== 'desktop';
   expand.hidden = true;
-  help.textContent = 'Enter the workspace to explore projects and demos.';
-  if (phase === 'booting') finishBoot();
-  if (phase === 'desktop') setExpanded(true);
+  help.textContent = 'Open the computer to browse the portfolio.';
+  if (view === 'monitor') setExpanded(true);
 }
 
 function setMotion(value) {
@@ -191,38 +213,43 @@ function setMotion(value) {
   room?.setMotion(value);
   motionToggle.textContent = value ? 'Pause motion' : 'Resume motion';
   motionToggle.setAttribute('aria-pressed', String(!value));
-  if (!value && phase === 'booting') {
-    finishBoot();
-    audio.play('ready');
-  }
-  if (!value && phase === 'shutdown') showRoom();
+  if (!value && phase === 'booting') finishBoot();
 }
 
-for (const control of [power, voice, sound]) control.hidden = false;
+function toggleSound() {
+  audio.setEnabled(!audio.enabled);
+}
+
+for (const control of [enter, voice, sound]) control.hidden = false;
 updateSound();
-power.addEventListener('click', () => enterWorkspace({ userAction: true }));
+audio.onSoundChange(updateSound);
+enter.addEventListener('click', enterWorkspace);
+computer.addEventListener('click', () => openComputer({ userAction: true }));
 voice.addEventListener('click', async () => {
   greetingRequested = true;
   if (!greeting.paused) audio.stopGreeting();
-  else if (!await audio.sayHello()) status.textContent = 'The greeting audio is unavailable. The transcript is shown above.';
-  updateSound();
+  else if (!await audio.sayHello()) status.textContent = 'The greeting audio is unavailable. Its text is shown above.';
 });
-sound.addEventListener('click', () => {
-  audio.setEnabled(!audio.enabled);
-  updateSound();
-});
+sound.addEventListener('click', toggleSound);
+traySound.addEventListener('click', toggleSound);
 document.addEventListener('pointerdown', () => { if (audio.enabled) audio.unlock(); }, { capture: true, once: true });
 document.addEventListener('keydown', () => { if (audio.enabled) audio.unlock(); }, { capture: true, once: true });
-audio.onSoundChange(updateSound);
 greeting.addEventListener('error', () => {
   voice.disabled = true;
   voice.textContent = 'Greeting audio unavailable';
 });
-viewRoom.addEventListener('click', showRoom);
+lookAround.addEventListener('click', showDesk);
+freeCamera.addEventListener('click', () => updateView(view === 'orbit' ? 'desk' : 'orbit'));
 expand.addEventListener('click', () => setExpanded(!expanded));
-skip.addEventListener('click', () => { finishBoot(); audio.play('ready'); });
+skip.addEventListener('click', finishBoot);
 motionToggle.addEventListener('click', () => setMotion(!motion));
 reducedMotion.addEventListener('change', event => setMotion(!event.matches));
+narrowViewport.addEventListener('change', event => {
+  if (event.matches && view === 'monitor') setExpanded(true);
+});
+window.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && view === 'monitor' && !event.defaultPrevented && !shutdownDialog.open) showDesk();
+});
 shutdownDialog.addEventListener('close', () => {
   if (shutdownDialog.returnValue === 'shutdown') shutDown();
   else apps.focus();
@@ -233,20 +260,18 @@ async function loadRoom() {
     const { createRoomScene } = await import('./room-scene.js');
     room = await createRoomScene({
       stage: viewport, host, display, reducedMotion: !motion,
-      onPower: () => enterWorkspace({ userAction: true }),
+      onPower: () => openComputer({ userAction: true }),
       onRadio: () => audio.tune(),
+      onOrbit: () => updateView('orbit'),
       onLost: useFallback,
       mouth: audio.mouth,
     });
     stage.classList.add('is-rendered');
-    room.focusScreen(phase !== 'room');
-    if (phase === 'booting' && viewport.clientWidth >= 670) setExpanded(false);
-    else room.expand(expanded);
-    if (phase !== 'room') {
-      viewRoom.hidden = false;
-      expand.hidden = phase !== 'desktop';
-    }
+    room.setView(view, true);
+    room.setPower(phase === 'desktop' || phase === 'booting');
+    if (view === 'monitor' && !narrowViewport.matches) setExpanded(false);
     motionToggle.hidden = false;
+    updateView(view, true);
     setMotion(motion);
   } catch (error) {
     useFallback();
@@ -254,13 +279,8 @@ async function loadRoom() {
   }
 }
 
-if (entry === 'desktop' || pendingApp) {
-  loadRoom().then(() => enterWorkspace({ immediate: true }));
-} else {
-  loadRoom().then(() => {
-    if (phase === 'room' && audio.enabled && !greetingRequested) {
-      greeting.play().catch(() => {});
-    }
-  });
-}
+loadRoom().then(() => {
+  if (entry === 'desktop' || nextApp) openComputer({ immediate: true });
+  else if (view === 'intro' && audio.enabled && !greetingRequested) greeting.play().catch(() => {});
+});
 

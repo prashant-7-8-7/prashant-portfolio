@@ -15,26 +15,16 @@ export async function createSceneRenderer(canvas) {
   renderer.setClearColor('#000000', 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.2;
+  renderer.toneMappingExposure = 1.05;
   return { renderer, hardware: true };
 }
 
 export function lightScene(scene) {
-  scene.add(new THREE.HemisphereLight('#ece5ff', '#4a395a', 1.95));
-  const key = new THREE.DirectionalLight('#fff0d8', 2.7);
+  scene.add(new THREE.HemisphereLight('#f9f9ff', '#69605b', 1.42));
+  const key = new THREE.DirectionalLight('#fff5e5', 2.35);
   key.position.set(-5, 10, 6);
   scene.add(key);
-  const rim = new THREE.DirectionalLight('#a9bcff', 1.4);
+  const rim = new THREE.DirectionalLight('#f0f2fa', .92);
   rim.position.set(6, 5, -7);
   scene.add(rim);
-}
-
-export function fitOrthographicCamera(camera, width, height, visibleHeight) {
-  const halfHeight = visibleHeight / 2;
-  const halfWidth = halfHeight * width / height;
-  camera.top = halfHeight;
-  camera.bottom = -halfHeight;
-  camera.left = -halfWidth;
-  camera.right = halfWidth;
-  camera.updateProjectionMatrix();
 }

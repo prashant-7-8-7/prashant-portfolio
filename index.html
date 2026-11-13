@@ -3,45 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#11111d">
+  <meta name="theme-color" content="#afafb1">
   <meta name="description" content="Meet Prashant Sharma, then enter his 3D workbench and explore his AI and ML portfolio on a retro computer.">
   <link rel="stylesheet" href="./src/styles.css">
-  <link rel="stylesheet" href="./src/experiences.css">
   <link rel="stylesheet" href="./src/room.css">
+  <link rel="stylesheet" href="./src/desktop.css">
   <link rel="icon" type="image/png" href="/favicon.png">
   <meta property="og:title" content="Prashant Sharma — AI &amp; ML Portfolio">
   <meta property="og:description" content="Power on my workbench computer and explore my projects in AI and machine learning.">
   <meta property="og:type" content="website">
   <title>Prashant Sharma — AI &amp; ML Portfolio</title>
 </head>
-<body class="experience-page laptop-page">
+<body class="laptop-page">
   <a class="skip-link" href="#main">Skip to content</a>
-  <header class="experience-header">
-    <div class="experience-nav shell">
-      <a class="experience-brand" href="./" aria-label="Prashant Sharma, portfolio home">
-        <span class="wordmark" aria-hidden="true">ps<span class="wordmark-dot">.</span></span>
-        <span>Prashant Sharma</span>
-      </a>
-      <span class="workbench-role">AI &amp; ML portfolio</span>
-    </div>
-  </header>
-
-  <main class="laptop-main shell" id="main" tabindex="-1">
-    <section class="room-stage workspace" id="room-stage" aria-labelledby="room-title">
-      <div class="workbench-bar">
-        <h1 id="room-title"><span class="workspace-dot" aria-hidden="true"></span> Prashant’s workspace</h1>
-        <div class="room-actions">
-          <button class="workspace-button" id="view-room" type="button" hidden>Look around</button>
-          <button class="workspace-button" id="expand-desktop" type="button" aria-pressed="false" hidden>Expand screen</button>
-          <button class="workspace-button" id="room-motion" type="button" aria-pressed="false" hidden>Pause motion</button>
-          <button class="workspace-button audio-toggle" id="workspace-sound" type="button" aria-pressed="false" hidden>Sound off</button>
-        </div>
+  <main class="laptop-main" id="main" tabindex="-1">
+    <section class="room-stage" id="room-stage" data-view="intro" aria-labelledby="room-title">
+      <header class="room-labels">
+        <h1 id="room-title">Prashant Sharma</h1>
+        <p>AI &amp; ML Developer</p>
+      </header>
+      <div class="room-actions" aria-label="Workspace controls">
+        <button class="workspace-button" id="view-room" type="button" hidden>Look around</button>
+        <button class="workspace-button" id="free-camera" type="button" aria-pressed="false" hidden>Free camera</button>
+        <button class="workspace-button" id="expand-desktop" type="button" aria-pressed="false" hidden>Expand screen</button>
+        <button class="workspace-button" id="room-motion" type="button" aria-pressed="false" hidden>Pause motion</button>
+        <button class="workspace-button" id="workspace-sound" type="button" aria-pressed="false" hidden>Sound off</button>
       </div>
       <div class="room-viewport" id="room-viewport">
-        <div class="room-poster" aria-hidden="true"><img src="/experiences/laptop.webp" width="760" height="438" alt="" fetchpriority="high"></div>
+        <div class="room-poster" aria-hidden="true"><img src="/experiences/laptop.webp" width="1000" height="625" alt="" fetchpriority="high"></div>
         <div class="room-canvas" id="room-canvas" aria-hidden="true"></div>
 
-        <section class="computer-display" id="computer-display" aria-label="Portfolio computer" hidden>
+        <section class="computer-display" id="computer-display" aria-label="Portfolio computer" hidden inert>
           <div class="boot-screen" id="boot-screen" hidden>
             <div>
               <p class="boot-heading" id="boot-heading">WORKSPACE SYSTEM</p>
@@ -51,28 +43,26 @@
           </div>
 
           <div class="portfolio-desktop" id="portfolio-desktop" hidden>
-            <div class="desktop-menubar"><span>Workspace</span><span>Prashant Sharma</span></div>
             <div class="desktop-area">
               <div class="desktop-wallpaper">
                 <nav class="desktop-shortcuts" aria-label="Desktop shortcuts">
-                  <button type="button" class="desktop-shortcut" data-app="showcase"><span class="app-icon app-showcase" aria-hidden="true">◎</span><span>My Showcase</span></button>
-                  <button type="button" class="desktop-shortcut" data-app="projects"><span class="app-icon app-folder" aria-hidden="true">▤</span><span>Projects</span></button>
-                  <button type="button" class="desktop-shortcut" data-app="terminal"><span class="app-icon app-terminal" aria-hidden="true">›_</span><span>Terminal</span></button>
-                  <button type="button" class="desktop-shortcut" data-app="verifier"><span class="app-icon app-verifier" aria-hidden="true">✓</span><span>Verifier</span></button>
-                  <button type="button" class="desktop-shortcut" data-app="games"><span class="app-icon app-game" aria-hidden="true">◇</span><span>Games</span></button>
-                  <button type="button" class="desktop-shortcut" data-app="radio"><span class="app-icon app-radio" aria-hidden="true">◉</span><span>Radio</span></button>
+                  <button type="button" class="desktop-shortcut" data-app="showcase"><span class="app-icon app-showcase" aria-hidden="true"></span>My Showcase</button>
+                  <button type="button" class="desktop-shortcut" data-app="trail"><span class="app-icon app-trail" aria-hidden="true"></span>Field Expedition</button>
+                  <button type="button" class="desktop-shortcut" data-app="escape"><span class="app-icon app-escape" aria-hidden="true"></span>Server Room Escape</button>
+                  <button type="button" class="desktop-shortcut" data-app="tiles"><span class="app-icon app-tiles" aria-hidden="true"></span>Word Tiles</button>
+                  <button type="button" class="desktop-shortcut" data-app="words"><span class="app-icon app-words" aria-hidden="true"></span>Word Guess</button>
+                  <button type="button" class="desktop-shortcut" data-app="credits"><span class="app-icon app-credits" aria-hidden="true"></span>Credits</button>
                 </nav>
-                <div class="desktop-identity" aria-hidden="true">
-                  <p>AI &amp; ML portfolio</p>
-                  <strong>Prashant <em>Sharma.</em></strong>
-                </div>
               </div>
               <div class="desktop-windows"></div>
             </div>
             <nav class="desktop-taskbar" aria-label="Desktop taskbar">
-              <button id="desktop-start" class="desktop-start" type="button" aria-expanded="false" aria-controls="desktop-menu"><span aria-hidden="true">▦</span> Start</button>
+              <button id="desktop-start" class="desktop-start" type="button" aria-expanded="false" aria-controls="desktop-menu"><span class="start-icon" aria-hidden="true"></span> Start</button>
               <div class="task-items" aria-label="Open windows"></div>
-              <time id="desktop-clock" aria-label="Local time"></time>
+              <div class="desktop-tray">
+                <button type="button" id="desktop-mute" class="tray-volume" aria-label="Mute sound" title="Mute sound">♪</button>
+                <time id="desktop-clock" aria-label="Local time"></time>
+              </div>
             </nav>
             <nav id="desktop-menu" class="desktop-start-menu" aria-label="Start menu" hidden>
               <button type="button" data-app="showcase">My Showcase</button>
@@ -80,6 +70,7 @@
               <button type="button" data-app="terminal">Terminal</button>
               <button type="button" data-app="verifier">Claim verifier</button>
               <button type="button" data-app="about">About</button>
+              <button type="button" data-app="experience">Experience</button>
               <button type="button" data-app="contact">Contact</button>
               <button type="button" data-app="games">Games</button>
               <button type="button" data-app="radio">Radio</button>
@@ -90,21 +81,22 @@
         </section>
 
         <div class="room-power-panel" id="room-power-panel" aria-labelledby="greeting-title">
-          <p class="greeting-quote" id="greeting-title">Hi, my name is <em>Prashant Sharma.</em></p>
+          <p class="greeting-quote" id="greeting-title">Hi, my name is Prashant Sharma.</p>
           <p class="greeting-caption" id="greeting-caption">Welcome to my workspace.</p>
           <div class="greeting-actions">
-            <button class="button button-primary" type="button" id="power-on" hidden><span id="power-label">Enter workspace</span><span class="out-arrow" aria-hidden="true"></span></button>
+            <button class="workspace-button greeting-enter" type="button" id="power-on" hidden>Enter workspace</button>
             <button class="workspace-button greeting-voice" type="button" id="greeting-play" hidden>Hear greeting</button>
           </div>
           <noscript><a class="text-link" href="./portfolio/">Read the text portfolio</a></noscript>
         </div>
         <audio id="greeting-audio" src="/sound/greeting.mp3" preload="metadata" hidden></audio>
+        <div class="desk-controls">
+          <p id="room-help" hidden>Click the monitor to use the computer.</p>
+          <button class="workspace-button desk-enter" type="button" id="enter-monitor" hidden>Open computer</button>
+        </div>
         <button class="workspace-button skip-boot" type="button" id="skip-boot" hidden>Skip boot</button>
       </div>
-      <div class="workspace-footer">
-        <p id="room-help">Click the monitor to enter. Drag to look around.</p>
-        <p id="room-status" class="sr-only" role="status"></p>
-      </div>
+      <p id="room-status" class="sr-only" role="status"></p>
     </section>
   </main>
   <dialog id="shutdown-dialog" class="project-dialog shutdown-dialog" aria-labelledby="shutdown-title">

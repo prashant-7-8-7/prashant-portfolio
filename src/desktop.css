@@ -1,0 +1,277 @@
+.portfolio-desktop, .shutdown-dialog {
+  --system: #c3c6ca;
+  --system-shadow: #818388;
+  --system-light: #fff;
+  --system-edge: #292a2c;
+  --system-blue: #0000a3;
+  --ink: #111;
+  --soft: #292929;
+  --accent: #00009c;
+  --rule: #a9aaad;
+  color-scheme: light;
+  color: var(--ink);
+  font: 14px/1.28 "Segoe UI", Tahoma, Arial, sans-serif;
+}
+.portfolio-desktop {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) 31px;
+  width: 100%;
+  height: 100%;
+  background: #3e9697;
+}
+.desktop-area { position: relative; min-height: 0; isolation: isolate; }
+.desktop-wallpaper { position: absolute; inset: 0; overflow: auto; }
+.desktop-shortcuts { display: grid; gap: 13px; width: 84px; padding: 16px 4px 8px; }
+.desktop-shortcut {
+  min-height: 68px;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 5px;
+  border: 1px solid transparent;
+  padding: 2px 2px 3px;
+  background: none;
+  color: #fff;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.1;
+  text-shadow: 1px 1px #255153;
+}
+.desktop-shortcut:hover, .desktop-shortcut:focus-visible { border: 1px dotted #fff; background: #00008051; outline: 0; }
+.app-icon, .start-icon {
+  --icon: 0;
+  display: block;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  background: url("/experiences/desktop-icons.png") calc(var(--icon) * -40px) 0 / 280px 40px no-repeat;
+  image-rendering: pixelated;
+}
+.app-trail { --icon: 1; }
+.app-escape { --icon: 2; }
+.app-tiles { --icon: 3; }
+.app-words { --icon: 4; }
+.app-credits { --icon: 5; }
+.start-icon { width: 17px; height: 17px; background-size: 119px 17px; background-position: -102px 0; }
+.desktop-windows { position: absolute; inset: 0; pointer-events: none; }
+
+.os-window, .desktop-taskbar, .desktop-start-menu, .shutdown-dialog {
+  border: 2px solid;
+  border-color: var(--system-light) var(--system-edge) var(--system-edge) var(--system-light);
+  background: var(--system);
+}
+.os-window {
+  position: absolute;
+  display: grid;
+  grid-template-rows: 22px minmax(0, 1fr) 21px;
+  padding: 2px;
+  min-width: 0;
+  overflow: hidden;
+  pointer-events: auto;
+}
+.os-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px;
+  padding: 2px 2px 2px 4px;
+  background: #818389;
+  color: #fff;
+  cursor: move;
+  touch-action: none;
+  user-select: none;
+}
+.os-window.is-active .os-titlebar { background: var(--system-blue); }
+.os-titlebar h2 {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  font: 700 13px/1.1 "Segoe UI", Tahoma, Arial, sans-serif;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.os-titlebar h2:focus { outline: none; }
+.os-titlebar .title-icon {
+  width: 13px;
+  height: 13px;
+  margin-right: 4px;
+  background-size: 91px 13px;
+  background-position: calc(var(--icon) * -13px) 0;
+}
+.os-window-controls { display: flex; gap: 2px; }
+.window-control, .desktop-control, .desktop-task, .desktop-start, .sweeper-tile {
+  border: 2px solid;
+  border-color: var(--system-light) var(--system-edge) var(--system-edge) var(--system-light);
+  border-radius: 0;
+  background: var(--system);
+  color: var(--ink);
+  font: inherit;
+}
+.window-control:active, .desktop-control:active, .desktop-task[aria-pressed="true"], .desktop-start[aria-expanded="true"] {
+  border-color: var(--system-edge) var(--system-light) var(--system-light) var(--system-edge);
+}
+.window-control {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  font: 700 12px/1 Arial, sans-serif;
+}
+.os-window-content {
+  min-width: 0;
+  overflow: auto;
+  margin-top: 3px;
+  padding: 14px 15px;
+  border: 2px solid;
+  border-color: #65666a #f6f6f6 #f6f6f6 #65666a;
+  background: #fff;
+}
+.os-window-content .project-lead, .os-window-content .detail-section p { color: var(--soft); }
+.os-window-content .eyebrow, .os-window-content .detail-section h3 { color: var(--system-blue); }
+.os-window-content .text-link { color: var(--system-blue); }
+.os-window-content .button { min-height: 31px; }
+.window-statusbar { display: flex; gap: 2px; align-items: stretch; padding: 3px 0 0; font-size: 11px; color: #242424; }
+.window-statusbar span {
+  padding: 1px 4px;
+  border: 1px solid;
+  border-color: #8a8c8f #f0f0f0 #f0f0f0 #8a8c8f;
+}
+.window-statusbar span:first-child { flex: 1 1 auto; }
+.window-statusbar span:last-child { width: 24%; padding-right: 15px; text-align: right; }
+.window-resize {
+  position: absolute;
+  z-index: 1;
+  right: 2px;
+  bottom: 2px;
+  width: 17px;
+  height: 17px;
+  background: repeating-linear-gradient(135deg, transparent 0 2px, #717176 2px 3px, #fff 3px 4px);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  cursor: nwse-resize;
+  touch-action: none;
+}
+.desktop-taskbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 2px 3px;
+  border-width: 2px 0 0;
+}
+.desktop-start {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  min-height: 24px;
+  padding: 0 4px;
+  font-weight: 700;
+}
+.task-items { display: flex; flex: 1 1 auto; gap: 3px; min-width: 0; overflow: auto; scrollbar-width: thin; }
+.desktop-task {
+  min-height: 24px;
+  min-width: 56px;
+  max-width: 13rem;
+  flex: 0 1 13rem;
+  overflow: hidden;
+  padding: 2px 6px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.desktop-task[aria-pressed="true"] {
+  background: repeating-conic-gradient(#fafafa 0% 25%, #c3c6ca 0% 50%) 0 0 / 3px 3px;
+  font-weight: 700;
+}
+.desktop-tray {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  min-height: 23px;
+  padding: 1px 5px;
+  border: 1px solid;
+  border-color: #8a8c8f #fff #fff #8a8c8f;
+}
+.tray-volume { border: 0; background: transparent; padding: 0 2px; color: #5a4300; }
+#desktop-clock { white-space: nowrap; font-size: 11px; }
+.desktop-start-menu {
+  position: absolute;
+  z-index: 500;
+  bottom: 30px;
+  left: 2px;
+  display: grid;
+  width: min(202px, 84%);
+  max-height: calc(100% - 38px);
+  overflow: auto;
+  padding: 3px;
+  box-shadow: 2px 2px #0005;
+}
+.desktop-start-menu button {
+  min-height: 28px;
+  border: 0;
+  padding: 4px 8px;
+  background: transparent;
+  color: #171717;
+  text-align: left;
+  font-size: 13px;
+}
+.desktop-start-menu button:hover, .desktop-start-menu button:focus-visible { outline: 0; background: var(--system-blue); color: #fff; }
+#desktop-shutdown { border-top: 1px solid #87898d; margin-top: 2px; }
+
+.showcase-app { padding: 0; overflow: hidden; }
+.showcase-browser { display: block; border: 0; width: 100%; height: 100%; background: #fff; }
+.terminal-app { display: grid; grid-template-rows: minmax(0, 1fr) auto; padding: 0; overflow: hidden; background: #0b0b0b; }
+.terminal-output { overflow: auto; padding: .74rem; color: #e2e2e2; font: 14px/1.5 "Courier Prime", var(--mono); overflow-wrap: anywhere; }
+.terminal-output p { margin: 0 0 .34rem; }
+.terminal-echo { color: #f4f4f4; }
+.terminal-input-row { display: flex; align-items: center; gap: 6px; border-top: 1px solid #747474; padding: 7px 10px; background: #171717; }
+.terminal-prompt { color: #dedede; white-space: nowrap; font: 14px/1.2 "Courier Prime", var(--mono); }
+.terminal-input { flex: 1 1 auto; min-width: 0; border: 0; padding: 2px; color: #fff; background: transparent; font: 14px/1.3 "Courier Prime", var(--mono); }
+.terminal-input:focus-visible { outline-color: #f5f5f5; outline-offset: 1px; }
+.desktop-control { min-height: 25px; padding: 2px 6px; }
+.desktop-control:hover { background: #dcdee0; }
+.window-projects { display: grid; gap: 6px; }
+.window-project {
+  display: grid;
+  gap: 2px;
+  text-align: left;
+  padding: 7px 9px;
+  border: 1px solid #737478;
+  background: #ededed;
+  color: #111;
+}
+.window-project:hover { background: #dddee3; border-color: var(--system-blue); }
+.window-project span { color: #434343; font-size: 12px; }
+
+.sweeper-description, .sweeper-status, .arcade-intro, .arcade-status, .arcade-log { color: #202020; font-size: 13px; margin-bottom: 7px; }
+.sweeper-toolbar, .arcade-actions, .arcade-form { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-bottom: 8px; }
+.sweeper-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 1px; width: min(100%, 275px); }
+.sweeper-tile { display: grid; place-items: center; min-width: 0; aspect-ratio: 1; font-weight: 700; }
+.sweeper-tile[data-state="open"] { border: 1px solid #909295; background: #e3e4e6; color: #0000a3; }
+.sweeper-tile[data-state="flag"], .sweeper-tile[data-state="mine"] { color: #850606; }
+.arcade-landmark { margin-bottom: 4px; font-size: 18px; }
+.arcade-form input { flex: 1 1 75px; min-width: 0; padding: 3px 6px; border: 1px inset #818388; background: #fff; color: #111; }
+.word-board { display: grid; gap: 3px; list-style: none; margin: 0 0 8px; padding: 0; }
+.word-board li, .letter-rack { display: flex; gap: 3px; flex-wrap: wrap; }
+.word-tile, .letter-rack button { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid #818388; background: #e1e3e4; color: #111; font-weight: 700; }
+.word-tile[data-state="correct"] { background: #c6ddb9; border-color: #607a53; }
+.word-tile[data-state="present"] { background: #ffe29a; border-color: #967b2c; }
+.letter-rack { margin-bottom: 7px; }
+.tile-results { padding-left: 18px; font: 13px/1.5 "Courier Prime", var(--mono); }
+.escape-canvas { display: block; width: min(100%, 400px); height: auto; image-rendering: pixelated; margin-bottom: 7px; border: 1px solid #555; }
+.radio-track { color: var(--system-blue); font-size: 18px; margin: 4px 0 9px; }
+.shutdown-dialog { max-width: 27rem; padding: 2px; border-radius: 0; }
+.shutdown-dialog .dialog-bar { padding: 5px 8px; border: 0; background: var(--system-blue); color: #fff; }
+.shutdown-dialog .project-dialog-content { padding: 14px 15px; }
+.shutdown-dialog .workspace-button { border: 2px outset #eee; padding: 3px 8px; background: var(--system); color: #111; }
+.shutdown-dialog .workspace-button:active { border-style: inset; }
+@media (max-width: 680px) {
+  .desktop-shortcuts { width: 100%; padding: 7px; gap: 4px; grid-template-columns: repeat(3, 1fr); }
+  .desktop-shortcut { min-height: 68px; }
+  .os-window-content { padding: 9px; }
+  .showcase-app, .terminal-app { padding: 0; }
+}
+
