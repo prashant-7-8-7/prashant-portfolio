@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Prashant Sharma, AI and ML undergraduate at MITS Gwalior. Projects in research automation, demand forecasting, document retrieval, and railway field reporting.">
+  <link rel="stylesheet" href="../src/showcase.css">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <title>Prashant Sharma — Showcase 2026</title>
+</head>
+<body class="showcase-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <main id="main" tabindex="-1">
+    <section class="showcase-home" id="top" aria-labelledby="showcase-name">
+      <h1 id="showcase-name">Prashant Sharma</h1>
+      <p class="showcase-role">AI &amp; ML Developer</p>
+      <nav aria-label="Showcase navigation">
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#work">Projects</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </section>
+
+    <div class="showcase-layout">
+      <aside class="showcase-sidebar" aria-label="Showcase sections">
+        <a class="sidebar-name" href="#top">Prashant<br>Sharma</a>
+        <p>Showcase ’26</p>
+        <nav aria-label="Section navigation">
+          <a href="#top">Home</a>
+          <a href="#about">About</a>
+          <a href="#experience">Experience</a>
+          <a href="#work">Projects</a>
+          <a href="#verifier">Demo</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </aside>
+
+      <div class="showcase-content">
+        <section class="showcase-section" id="about">
+          <h2>About</h2>
+          <p class="section-subtitle">Prashant Sharma</p>
+          <p>I’m an AI and ML undergraduate at Madhav Institute of Technology &amp; Science, Gwalior. I’m interested in how models retrieve information, how we check their outputs, and how we turn them into software people can use.</p>
+          <p>My projects take those questions into a research report, a study session, a microgrid dashboard, and a railway field app.</p>
+          <p><a href="https://github.com/prashant-7-8-7">GitHub profile</a></p>
+        </section>
+
+        <section class="showcase-section" id="experience">
+          <h2>Experience</h2>
+          <p class="section-subtitle">Education &amp; project work</p>
+          <h3>Madhav Institute of Technology &amp; Science</h3>
+          <p>Artificial Intelligence and Machine Learning undergraduate · Gwalior, India.</p>
+          <h3>Applied AI and machine learning</h3>
+          <p>I’ve built and tested projects in evidence-backed research, document retrieval, and electricity demand forecasting. On the RailSetu team, I tested and debugged the field-reporting flow between Flutter and FastAPI.</p>
+          <p><a href="#work">See the projects</a></p>
+        </section>
+
+        <section class="showcase-section" id="work">
+          <h2>Projects</h2>
+          <p class="section-subtitle">Software &amp; machine learning</p>
+          <p>Explore the case studies, source code, and interactive demo.</p>
+          <div class="showcase-projects">
+            <article class="showcase-project" id="research">
+              <h3>Research Agents</h3>
+              <p>A Python research pipeline that turns a question into a cited report and checks individual claims against the source text.</p>
+              <div class="project-actions">
+                <button type="button" data-view="research" hidden>Case study</button>
+                <a href="https://github.com/prashant-7-8-7/research-agents">Source</a>
+                <a href="#verifier">Try the verifier</a>
+              </div>
+            </article>
+            <article class="showcase-project" id="gridpulse">
+              <h3>GridPulse</h3>
+              <p>A microgrid dashboard that turns hourly weather records into electricity-demand forecasts and dispatch decisions.</p>
+              <img src="/projects/gridpulse.webp" alt="GridPulse dashboard with demand forecast and dispatch summary" width="1165" height="800" loading="lazy">
+              <div class="project-actions">
+                <button type="button" data-view="gridpulse" hidden>Case study</button>
+                <a href="https://github.com/prashant-7-8-7/GridPulse">Source</a>
+              </div>
+            </article>
+            <article class="showcase-project" id="document-workspace">
+              <h3>AI Document Workspace</h3>
+              <p>A study workspace with source-linked answers, a document viewer, and quiz generation.</p>
+              <div class="project-actions">
+                <button type="button" data-view="workspace" hidden>Case study</button>
+                <a href="https://github.com/prashant-7-8-7/Macro-Project-">Source</a>
+              </div>
+            </article>
+            <article class="showcase-project" id="railsetu">
+              <h3>RailSetu</h3>
+              <p>A team-built prototype for planning railway maintenance blocks and reporting issues from the field.</p>
+              <div class="project-actions">
+                <button type="button" data-view="railsetu" hidden>Case study</button>
+                <a href="https://github.com/ssh-gaurav/RailSetu">Team source</a>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="showcase-section" id="verifier">
+          <h2>Claim verifier</h2>
+          <p class="section-subtitle">Research Agents demo</p>
+          <p>Compare a claim with the evidence and see how the verdict changes. The examples use GridPulse’s documented dispatch rules.</p>
+          <div class="verifier-panel">
+            <div class="verifier-body">
+              <fieldset id="claim-options" hidden>
+                <legend>Choose a claim</legend>
+                <div class="claim-options">
+                  <label><input type="radio" name="claim" value="dispatch" checked><span>Dispatch</span></label>
+                  <label><input type="radio" name="claim" value="overload"><span>Overload</span></label>
+                  <label><input type="radio" name="claim" value="savings"><span>Savings</span></label>
+                </div>
+              </fieldset>
+              <div class="claim-block">
+                <p class="eyebrow">Claim</p>
+                <p id="claim-text">At 17:00, a forecast of 175 kW triggers Renewable Storage Mode.</p>
+              </div>
+              <div class="claim-block evidence-block">
+                <p class="eyebrow">Evidence</p>
+                <p id="evidence-text">GridPulse selects Renewable Storage Mode when forecast demand exceeds 160 kW or the hour is 18:00–22:00.</p>
+              </div>
+              <div class="verifier-action">
+                <button class="button button-primary" type="button" id="verify-button" hidden>Check claim <span class="out-arrow" aria-hidden="true"></span></button>
+                <a class="text-link" href="https://github.com/prashant-7-8-7/GridPulse#exact-controller-rules">Evidence source <span class="out-arrow" aria-hidden="true"></span></a>
+              </div>
+              <div class="verdict" id="verdict" role="status" aria-live="polite"></div>
+              <noscript><p class="noscript-note">Supported. 175 kW exceeds the 160 kW threshold, so the demand rule applies at 17:00.</p></noscript>
+            </div>
+          </div>
+        </section>
+
+        <section class="showcase-section" id="contact">
+          <h2>Contact</h2>
+          <p class="section-subtitle">Let’s get in touch</p>
+          <p><a href="mailto:prashantsh787@gmail.com">prashantsh787@gmail.com</a></p>
+          <ul class="contact-links">
+            <li><a href="https://github.com/prashant-7-8-7">GitHub</a></li>
+            <li><a href="https://in.linkedin.com/in/prashant-sharma-040ab0388">LinkedIn</a></li>
+            <li><a href="https://dev.to/prashant_97e6d2c6314b6895">DEV</a></li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </main>
+  <dialog class="project-dialog" id="portfolio-window" aria-labelledby="window-title">
+    <div class="dialog-bar">
+      <h2 id="window-title" tabindex="-1"></h2>
+      <button class="icon-button dialog-close" type="button" aria-label="Close case study" data-close-window autofocus>×</button>
+    </div>
+    <div class="project-dialog-content" data-window-content></div>
+  </dialog>
+
+  <script type="module" src="../src/main.js"></script>
+</body>
+</html>

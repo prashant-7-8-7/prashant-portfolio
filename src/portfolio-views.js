@@ -6,6 +6,7 @@ const sectionTitles = {
   projects: 'Projects',
   verifier: 'Claim verifier',
   about: 'About Prashant',
+  experience: 'Experience',
   contact: 'Contact',
 };
 
@@ -121,6 +122,11 @@ export function renderPortfolioView(container, view, { desktop = false } = {}) {
       node('p', 'AI & ML undergraduate · MITS Gwalior', 'eyebrow'),
       node('p', 'I’m Prashant Sharma. I’m interested in how models retrieve information, how we check their outputs, and how they fit into useful software.', 'project-lead'),
       node('p', 'My projects take those questions into a research report, a study session, a microgrid dashboard, and a railway field app.'),
+    );
+  } else if (view === 'experience') {
+    container.replaceChildren(
+      node('p', 'AI & ML undergraduate · Madhav Institute of Technology & Science, Gwalior', 'project-lead'),
+      node('p', 'I’ve built projects in research automation, document retrieval, and demand forecasting. On the RailSetu team I worked on testing and debugging the Flutter field-reporting flow and FastAPI integration.'),
     );
   } else if (view === 'contact') {
     const links = node('div', '', 'project-dialog-links');

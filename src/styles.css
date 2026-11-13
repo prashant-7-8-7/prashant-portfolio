@@ -1,0 +1,158 @@
+:root {
+  color-scheme: light;
+  --ink: #111;
+  --soft: #292929;
+  --accent: #0000a3;
+  --mono: "Courier Prime", "Courier New", monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  background: #fff;
+  color: var(--ink);
+  font: 16px/1.45 "Segoe UI", Tahoma, Arial, sans-serif;
+}
+h1, h2, h3, p, ul, fieldset { margin: 0; }
+button, input { font: inherit; }
+button { color: inherit; cursor: pointer; }
+a { color: inherit; }
+img { display: block; max-width: 100%; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.skip-link {
+  position: fixed;
+  z-index: 10;
+  top: .8rem;
+  left: .8rem;
+  padding: .55rem .8rem;
+  border: 1px solid #000;
+  background: #fff;
+  color: #111;
+  transform: translateY(-200%);
+}
+.skip-link:focus { transform: none; }
+
+.eyebrow {
+  color: var(--accent);
+  font: 700 .82em/1.4 var(--mono);
+  text-transform: uppercase;
+}
+.text-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--accent);
+  text-decoration: underline;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: .35em;
+  border: 2px outset #e4e4e4;
+  padding: .24em .55em;
+  background: #c3c6ca;
+  color: #111;
+  text-decoration: none;
+}
+.button:hover { background: #e1e2e4; }
+.button:active { border-style: inset; }
+.out-arrow::after { content: "↗"; }
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+  list-style: none;
+  padding: 0;
+  margin-top: .85rem;
+}
+.tags li {
+  padding: .15rem .42rem;
+  border: 1px solid #adadad;
+  background: #efefef;
+  color: #111;
+  font: .81em/1.4 var(--mono);
+}
+.project-lead { color: var(--soft); margin-bottom: .95rem; }
+.detail-section { margin-bottom: .8rem; }
+.detail-section h3 { color: var(--accent); font-size: 1em; margin-bottom: .17em; }
+.detail-section p { color: var(--soft); }
+.project-dialog-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .65rem .95rem;
+  margin-top: 1rem;
+}
+
+.project-dialog {
+  max-height: calc(100% - 20px);
+  max-width: calc(100% - 20px);
+  border: 2px outset #dedede;
+  padding: 2px;
+  background: #c3c6ca;
+  color: #111;
+  box-shadow: 3px 3px 0 #0004;
+  overscroll-behavior: contain;
+}
+.project-dialog::backdrop { background: #0006; }
+body:has(.project-dialog[open]) { overflow: hidden; }
+.dialog-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .65rem;
+  padding: 3px 4px 3px 8px;
+  background: #0000a3;
+  color: #fff;
+  font: 700 .88rem/1.3 "Segoe UI", Tahoma, Arial, sans-serif;
+}
+.dialog-bar h2 { font: inherit; }
+.dialog-close {
+  display: grid;
+  place-items: center;
+  width: 21px;
+  height: 21px;
+  border: 2px outset #e5e5e5;
+  padding: 0;
+  background: #c3c6ca;
+  color: #111;
+  font: 700 16px/1 Arial, sans-serif;
+}
+.project-dialog-content { margin-top: 3px; padding: 12px 14px; border: 1px inset #888; background: #fff; }
+
+.verifier-panel { border: 1px solid #797979; }
+.verifier-body { padding: 11px 14px; }
+.verifier-body fieldset { border: 0; padding: 0; margin-bottom: .95rem; }
+.verifier-body legend { padding: 0; margin-bottom: .42rem; font-size: .86em; }
+.claim-options { display: flex; flex-wrap: wrap; gap: .4rem; }
+.claim-options label { position: relative; display: block; cursor: pointer; }
+.claim-options input { opacity: 0; position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.claim-options span { display: block; padding: .22em .47em; border: 1px solid #777; font-size: .91em; }
+.claim-options input:checked + span { background: var(--accent); color: #fff; }
+.claim-options input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.claim-block { border-left: 2px solid #858585; padding-left: .7rem; margin-bottom: .85rem; }
+.claim-block .eyebrow { margin-bottom: .25rem; }
+.verifier-action { display: flex; gap: .8rem; align-items: center; flex-wrap: wrap; }
+.verdict:not(:empty) {
+  margin-top: .85rem;
+  padding: .55rem .7rem;
+  border: 1px solid #828282;
+  background: #ededed;
+  font-size: .92em;
+}
+.verdict strong { display: block; margin-bottom: .15rem; }
+.noscript-note { margin-top: .7rem; color: var(--accent); }
