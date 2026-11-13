@@ -1,87 +1,75 @@
-# Prashant Sharma · AI & ML Portfolio
+# Prashant Sharma · Interactive Portfolio
 
-An animated Prashant greets visitors beside a beige CRT in a 3D room. **Hear greeting** plays the spoken introduction. **Enter workspace** moves the camera to the desk. Click the monitor or choose **Open computer** to run the startup sequence and enter the retro desktop.
+I'm an AI and ML undergraduate at Madhav Institute of Technology & Science, Gwalior. My portfolio lives inside a retro computer. Power on the CRT to explore my work in evidence-backed research, document retrieval, energy forecasting, and railway field reporting.
+
+[**Enter the workspace**](https://prashant-7-8-7.github.io/prashant-portfolio/) · [Open the desktop](https://prashant-7-8-7.github.io/prashant-portfolio/#desktop) · [Browse the projects](https://prashant-7-8-7.github.io/prashant-portfolio/portfolio/#work)
+
+<p align="center">
+  <img src="./public/experiences/laptop.webp" alt="A beige CRT computer on a 3D desk beside the animated Prashant character" width="720">
+</p>
 
 ## Explore the workspace
 
-| Where | What opens |
+Choose **Enter workspace**, then click the monitor or select **Open computer**. The CRT runs a short startup sequence and opens **My Showcase**. Drag a window by its title bar to move it, or drag its lower-right corner to resize it. Use **Look around** to return to the room while your desktop stays open.
+
+| Where | What to try |
 | --- | --- |
-| My Showcase | About, Experience, Projects, and Contact in the white Showcase window |
-| Projects | Research Agents, GridPulse, AI Document Workspace, and RailSetu in desktop windows |
-| Start | All desktop apps and the shutdown command |
-| Terminal | Type `help`, `ls`, `whoami`, `open projects`, or `open research` |
-| Games | Signal Sweeper, Word Guess, Word Tiles, Field Expedition, and Server Room Escape |
-| Radio | Two original instrumental tracks with play, pause, and track controls |
+| **My Showcase → Projects** | Read the case studies, including what I built, how I tested it, and where to find the source. |
+| **Start → Claim verifier** | Compare three sample claims against GridPulse's documented rules. The demo shows why each claim is supported, contradicted, or lacks evidence. |
+| **Start → Terminal** | Type `help` for commands, or run `open research` to launch a case study. |
+| **Start → Games** | Play Signal Sweeper, Word Guess, Word Tiles, Field Expedition, or Server Room Escape. |
+| **Start → Radio** | Play *Night Shift* or *First Light*. Use **Hear greeting** in the room to replay the introduction. |
 
-Drag a window’s title bar to move it and its bottom-right corner to resize it. **Look around** returns to the desk with the desktop still running. Use **Free camera** and drag to inspect the room. **Shut down** closes the apps and returns to the greeting. **Expand screen** fills the workspace with the desktop. Phones use this view by default. **Pause motion** stops ambient animation and honors the device’s reduced-motion setting.
+**Expand screen** gives the desktop more room and opens by default on phones. **Pause motion** and **Sound on/off** control the experience. The room also respects your device's reduced-motion setting.
 
-**Sound on/off** controls the room ambience, fan hum, startup and shutdown chimes, keyboard and mouse effects, and the radio. Browsers may wait for an interaction before allowing sound. **Hear greeting** plays the synthetic narration and its mouth animation on demand. All audio is local to the site.
+## Featured projects
 
-The address `/#desktop` opens the desktop immediately. Deep links such as `/#projects` and `/#research` open the matching app. Old `/laptop/` and `/rover/` links redirect to the workspace and its Projects window. The same showcase is available at `/portfolio/` for direct reading and for browsers without JavaScript.
+| Project | What it does | Source |
+| --- | --- | --- |
+| **Research Agents** | Produces cited research reports and checks individual claims against source text. | [GitHub](https://github.com/prashant-7-8-7/research-agents) |
+| **GridPulse** | Forecasts electricity demand from hourly weather data and applies dispatch and overload rules for a microgrid. | [GitHub](https://github.com/prashant-7-8-7/GridPulse) |
+| **AI Document Workspace** | Helps students study uploaded documents through source-linked answers, a document viewer, and quizzes. | [GitHub](https://github.com/prashant-7-8-7/Macro-Project-) |
+| **RailSetu** | Supports railway maintenance planning and field reporting. I tested and debugged the Flutter reporting flow and its FastAPI integration. | [Team repository](https://github.com/ssh-gaurav/RailSetu) |
 
 ## Run locally
 
-Install Node.js 24 LTS, extract the ZIP, and open the `prashant-portfolio` folder in VS Code.
+Use **Node.js 24**, the same major version used by the deployment workflow.
 
-```powershell
+```bash
+git clone https://github.com/prashant-7-8-7/prashant-portfolio.git
+cd prashant-portfolio
 npm ci
 npm run dev
 ```
 
-Open the local URL shown in the terminal. For production, use `npm run build`. The output goes to `dist/`, which you can check with `npm run preview`.
+Open the URL printed in the terminal. To check the production build locally, use these commands.
 
-## Update an existing repository
-
-Copy the contents of the extracted `prashant-portfolio` folder into your existing repository. Run the commands in that repository to stage the update and remove files retired from previous versions.
-
-```powershell
-git rm --ignore-unmatch -- src/experiences.css src/portrait.js src/launcher.js src/rover.js src/rover.css src/rover-audio.js src/rover-map.js src/rover-world.js src/rover-world-data.js src/workspace-scene.js public/experiences/rover.webp
-git add index.html laptop rover portfolio src public package.json package-lock.json vite.config.js README.md
-git diff --cached --stat
-git commit -m "Rebuild the portfolio as a retro CRT desktop"
-git push
+```bash
+npm run build
+npm run preview
 ```
 
-## Make the first commits
+The build outputs static files to `dist/`. The **Deploy portfolio** workflow publishes them to GitHub Pages on pushes to `main` and supports manual runs. [Deployment workflow](.github/workflows/pages.yml)
 
-Review your bio, project descriptions, and links in `portfolio/index.html` and `src/projects.js`. Create an empty public repository named `prashant-7-8-7.github.io` on GitHub, then run these commands in the extracted project folder.
+## How it works
 
-```powershell
-git init -b main
-git add .gitignore package.json package-lock.json vite.config.js index.html laptop rover portfolio src public
-git commit -m "Build the animated CRT workspace portfolio"
-git add README.md .github/workflows/pages.yml
-git commit -m "Document setup and configure GitHub Pages"
-git remote add origin https://github.com/prashant-7-8-7/prashant-7-8-7.github.io.git
-git push -u origin main
-```
+The portfolio runs in the browser. The room uses Three.js and WebGL 2, with a software Canvas renderer as a fallback. The scene projects a working HTML desktop onto the CRT. The Web Audio API generates sound effects, and the narration and music are bundled locally. Vite builds the site and its standalone Showcase.
 
-If Git asks for your identity, run `git config user.name "Prashant Sharma"` and `git config user.email "YOUR_GITHUB_EMAIL_OR_NOREPLY_ADDRESS"` in this repository, then retry the commit.
-
-## Publish to GitHub Pages
-
-1. In the repository, open **Settings → Pages** and choose **GitHub Actions** as the source.
-2. Open **Actions → Deploy portfolio → Run workflow** on `main`. If the push already deployed successfully, use that run’s URL.
-3. Open the deployment URL shown in the workflow. For the repository above, it is `https://prashant-7-8-7.github.io/`.
-4. Connect that URL in your ONEWHO dashboard and create an application named **Unstop**.
-5. Submit the resulting `/a/unstop` link and the public repository URL on Unstop.
-
-## Edit the workspace
-
-| File | Contents |
+| Source | What to edit |
 | --- | --- |
-| `index.html` and `src/laptop.js` | Greeting, entry, boot, and shutdown |
-| `src/room-models.js` and `src/workspace-models.js` | Room, CRT, radio, and animated character models |
-| `src/room-scene.js` | Room camera, monitor projection, and animation |
-| `src/room.css`, `src/desktop.css`, and `src/showcase.css` | Room controls, desktop interface, and Showcase layout |
-| `src/workspace-audio.js` and `public/sound/` | Local narration, radio tracks, and synthesized sound effects |
-| `src/desktop-windows.js`, `src/desktop-apps.js`, and `src/desktop-games.js` | Window management, apps, and games |
-| `portfolio/index.html` and `src/projects.js` | Showcase content and case studies |
-| `src/scene-renderer.js` and `src/workspace-canvas.js` | WebGL 2 and Canvas renderers |
+| [`src/room-models.js`](src/room-models.js) and [`src/room-scene.js`](src/room-scene.js) | Room geometry, camera movement, and CRT projection |
+| [`src/laptop.js`](src/laptop.js) and [`src/desktop-windows.js`](src/desktop-windows.js) | Greeting, boot sequence, and window controls |
+| [`src/desktop-apps.js`](src/desktop-apps.js) and [`src/desktop-games.js`](src/desktop-games.js) | Desktop apps, terminal commands, and games |
+| [`portfolio/index.html`](portfolio/index.html) and [`src/projects.js`](src/projects.js) | Showcase content, case studies, and verifier examples |
+| [`src/workspace-audio.js`](src/workspace-audio.js) and [`public/sound/`](public/sound/) | Sound effects, greeting, and radio tracks |
 
 ## Credits
 
-- Animated developer and 3D workbench reference. [David Heckhoff](https://david-hckh.com/)
-- CRT room, camera movement, startup sequence, desktop, Showcase, and sound interaction references. [Henry Heffernan’s workspace](https://henryheffernan.com/) · [Henry’s desktop](https://os.henryheffernan.com/)
-- The scene geometry, audio cues, radio tracks, and games were made for this workspace. The greeting uses a synthetic Flite voice.
-- The GridPulse card uses its project dashboard screenshot. [GridPulse source image](https://github.com/prashant-7-8-7/GridPulse/blob/main/docs/assets/dashboard.jpg)
+- The animated character and workbench draw inspiration from [David Heckhoff](https://david-hckh.com/).
+- The CRT, camera transitions, and desktop draw inspiration from [Henry Heffernan's workspace](https://henryheffernan.com/) and [desktop](https://os.henryheffernan.com/).
+- The room models, sound effects, radio tracks, and games were made for this portfolio. The greeting uses a synthetic Flite voice.
+- The GridPulse image comes from the [project's dashboard screenshot](https://github.com/prashant-7-8-7/GridPulse/blob/main/docs/assets/dashboard.jpg).
+
+## Contact
+
+[GitHub](https://github.com/prashant-7-8-7) · [LinkedIn](https://in.linkedin.com/in/prashant-sharma-040ab0388)
