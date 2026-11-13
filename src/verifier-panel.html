@@ -1,0 +1,27 @@
+<div class="verifier-panel" data-reveal>
+        <div class="panel-bar"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Claim verifier</span></div>
+        <div class="verifier-body">
+          <fieldset id="claim-options" hidden>
+            <legend>Choose a claim</legend>
+            <div class="claim-options">
+              <label><input type="radio" name="claim" value="dispatch" checked><span>Dispatch</span></label>
+              <label><input type="radio" name="claim" value="overload"><span>Overload</span></label>
+              <label><input type="radio" name="claim" value="savings"><span>Savings</span></label>
+            </div>
+          </fieldset>
+          <div class="claim-block">
+            <p class="eyebrow">Claim</p>
+            <p id="claim-text">At 17:00, a forecast of 175 kW triggers Renewable Storage Mode.</p>
+          </div>
+          <div class="claim-block evidence-block">
+            <p class="eyebrow">Evidence</p>
+            <p id="evidence-text">GridPulse selects Renewable Storage Mode when forecast demand exceeds 160 kW or the hour is 18:00–22:00.</p>
+          </div>
+          <div class="verifier-action">
+            <button class="button button-primary" type="button" id="verify-button" hidden>Check claim <span class="out-arrow" aria-hidden="true"></span></button>
+            <a class="text-link" href="https://github.com/prashant-7-8-7/GridPulse#exact-controller-rules">Evidence source <span class="out-arrow" aria-hidden="true"></span></a>
+          </div>
+          <div class="verdict" id="verdict" role="status" aria-live="polite"></div>
+          <noscript><p class="noscript-note">Supported. 175 kW exceeds the 160 kW threshold, so the demand rule applies at 17:00.</p></noscript>
+        </div>
+      </div>
