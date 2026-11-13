@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    const project = new URLSearchParams(location.search).get('project');
+    if (['research', 'gridpulse', 'workspace', 'railsetu'].includes(project)) {
+      location.replace('../#' + project);
+    }
+  </script>
+  <meta http-equiv="refresh" content="0; url=../#projects">
+  <link rel="stylesheet" href="../src/styles.css">
+  <title>Projects — Prashant Sharma</title>
+</head>
+<body>
+  <main class="shell">
+    <p><a class="text-link" href="../#projects">Open Projects in the workspace</a></p>
+  </main>
+</body>
+</html>
